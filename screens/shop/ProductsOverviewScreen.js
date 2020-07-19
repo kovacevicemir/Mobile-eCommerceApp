@@ -6,13 +6,16 @@ import ProductItem from "../../components/shop/ProductItem";
 const ProductsOverviewScreen = (props) => {
   const products = useSelector((state) => state.products.availableProducts);
 
-  const onViewDetail = props =>{
-      console.log('button clicked')
-  }
+  const onViewDetail = (productId, productTitle) => {
+    props.navigation.navigate("ProductDetailScreen", {
+      productId: productId,
+      productTitle: productTitle,
+    });
+  };
 
-  const onAddToCart = props =>{
-      console.log('button clicked')
-  }
+  const onAddToCart = (productId) => {
+    console.log("button clicked", productId);
+  };
 
   return (
     <FlatList
