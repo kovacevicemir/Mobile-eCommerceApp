@@ -43,7 +43,7 @@ const ProductItem = (props) => {
               <Button
                 style={styles.btn_cart}
                 title="Go to Cart"
-                onPress={() => props.onAddToCart(product.id, product.title)}
+                onPress={() => props.onAddToCart(product.id, product.title, product.price)}
               />
             </View>
           </View>
@@ -80,11 +80,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    marginVertical: 4,
+    marginVertical: 2,
+    fontFamily:'open-sans-bold'
   },
   price: {
     fontSize: 14,
     color: "#888",
+    fontFamily:'open-sans'
   },
   actions: {
     flexDirection: "row",
