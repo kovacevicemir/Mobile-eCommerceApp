@@ -42,7 +42,7 @@ const ProductItem = (props) => {
               />
               <Button
                 style={styles.btn_cart}
-                title="Go to Cart"
+                title="To Cart"
                 onPress={() => props.onAddToCart(product.id, product.title, product.price)}
               />
             </View>

@@ -19,7 +19,6 @@ export default (state = initialState, action) => {
       const cartItemId = product.id;
       if (state.items[cartItemId]) {
         const item = state.items[cartItemId]
-        console.log('this is item', item)
         // item is already in cart
         const updatedCartItem = new CartItem(
             item.quantity + 1,
