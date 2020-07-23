@@ -4,13 +4,13 @@ import Colors from "../../constants/Colors";
 import { useSelector, useDispatch } from "react-redux";
 import CartItem from "../../components/shop/CartItem";
 import { removeFromCart } from "../../store/actions/cart";
+import * as ordersActions from "../../store/actions/order"
 
 const CartScreen = (props) => {
   //style={styles.something}
 
   const dispatch = useDispatch();
   const onRemove = (id) => {
-    console.log("pressed ", id);
     dispatch(removeFromCart(id));
   };
 
@@ -42,6 +42,9 @@ const CartScreen = (props) => {
           disabled={cartItems.length === 0}
           color={Colors.accent}
           title="Order Now"
+          onPress = {() => {
+            dispatch(ordersActions.addOrder(cartItems, cartTotalAmount))
+          }}
         />
       </View>
       <View>
