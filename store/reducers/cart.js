@@ -1,6 +1,6 @@
 //CART REDUCER
-import PRODUCTS from "../../data/dummy-data";
 import { ADD_TO_CART, REMOVE_FROM_CART } from "../actions/cart";
+import { ADD_ORDER } from "../actions/order"
 import CartItem from "../../models/CartItem";
 
 //initial state
@@ -79,6 +79,9 @@ export default (state = initialState, action) => {
         items: updatedCartItems,
         totalAmount: state.totalAmount - selectedCartItem.productPrice,
       };
+    
+    case ADD_ORDER:
+      return initialState
 
     default:
       return state;
