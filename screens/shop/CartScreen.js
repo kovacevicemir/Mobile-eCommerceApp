@@ -51,7 +51,7 @@ const CartScreen = (props) => {
         <FlatList
           data={cartItems}
           keyExtractor={(item) => item.productId}
-          renderItem={(item) => <CartItem item={item} onRemove={onRemove} />}
+          renderItem={(item) => <CartItem item={item} deletable={true} onRemove={onRemove} />}
         />
       </View>
     </View>
