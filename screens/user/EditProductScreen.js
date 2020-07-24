@@ -3,19 +3,21 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   TextInput,
   ScrollView,
-  Platform
+  Platform,
 } from "react-native";
 import Colors from "../../constants/Colors";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import * as ProductActions from "../../store/actions/products";
 
 //style={styles.something}
 
 const EditProductScreen = (props) => {
+  const dispatch = useDispatch();
+
   const prodId = props.navigation.getParam("productId");
   const editedProduct = useSelector((state) =>
     state.products.userProducts.find((product) => product.id === prodId)
@@ -30,13 +32,24 @@ const EditProductScreen = (props) => {
     editedProduct ? editedProduct.description : ""
   );
 
-  const submitHandler = useCallback(() =>{
-      console.log('submitting!')
-  },[])
+  const submitHandler = useCallback(() => {
+    if (editedProduct) {
+      //editing
+      dispatch(
+        ProductActions.updateProduct(prodId, title, description, imageURL)
+      );
+    } else {
+      //creating
+      dispatch(
+        ProductActions.createProduct(title, description, imageURL, +price)
+      );
+    }
+    props.navigation.goBack();
+  }, [title, imageURL, price, description]);
 
   useEffect(() => {
-      props.navigation.setParams({'submit':submitHandler})
-  }, [submitHandler])
+    props.navigation.setParams({ submit: submitHandler });
+  }, [submitHandler]);
 
   return (
     <ScrollView>
@@ -82,7 +95,7 @@ const EditProductScreen = (props) => {
 };
 
 EditProductScreen.navigationOptions = (navData) => {
-  const submitFn = navData.navigation.getParam('submit')
+  const submitFn = navData.navigation.getParam("submit");
   return {
     headerTitle: navData.navigation.getParam("productId")
       ? "Edit Product"
