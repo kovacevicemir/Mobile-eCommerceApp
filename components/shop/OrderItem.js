@@ -26,7 +26,7 @@ const OrderItem = (props) => {
         <View style={styles.detailItems}>
           {orderItems.map((cartItem) => {
             const item = { item: cartItem };
-            return <CartItem item={item} deletable={false} />;
+            return <CartItem item={item} key={cartItem.productId} deletable={false} />;
           })}
         </View>
       )}

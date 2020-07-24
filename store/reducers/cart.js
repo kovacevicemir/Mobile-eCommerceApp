@@ -1,6 +1,7 @@
 //CART REDUCER
 import { ADD_TO_CART, REMOVE_FROM_CART } from "../actions/cart";
 import { ADD_ORDER } from "../actions/order"
+import { DELETE_PRODUCT } from "../actions/products"
 import CartItem from "../../models/CartItem";
 
 //initial state
@@ -82,6 +83,19 @@ export default (state = initialState, action) => {
     
     case ADD_ORDER:
       return initialState
+
+    case DELETE_PRODUCT:
+      if(!state.items[action.payload]){
+        return state;
+      }
+      const updatedItems = {...state.items}
+      const itemTotal = state.items[action.payload].sum;
+      delete updatedItems[action.payload];
+      return {
+        ...state,
+        items: updatedItems,
+        totalAmount: state.totalAmount - itemTotal
+      }
 
     default:
       return state;

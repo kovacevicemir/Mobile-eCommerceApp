@@ -1,10 +1,18 @@
 import React from "react";
-import { StyleSheet, Text, View, FlatList, Platform } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Platform,
+  Button,
+} from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import ProductItem from "../../components/shop/ProductItem";
 import * as CartActions from "../../store/actions/cart";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import Colors from "../../constants/Colors";
 
 const ProductsOverviewScreen = (props) => {
   const products = useSelector((state) => state.products.availableProducts);
@@ -33,10 +41,27 @@ const ProductsOverviewScreen = (props) => {
       data={products}
       renderItem={(itemData) => (
         <ProductItem
-          onViewDetail={onViewDetail}
+          onSelect={onViewDetail}
           onAddToCart={onAddToCart}
           product={itemData.item}
-        />
+        >
+          <Button
+            color = {Colors.primary}
+            title="View Details"
+            onPress={() => onViewDetail(itemData.item.id, itemData.item.title)}
+          />
+          <Button
+            color = {Colors.primary}
+            title="To Cart"
+            onPress={() =>
+              onAddToCart(
+                itemData.item.id,
+                itemData.item.title,
+                itemData.item.price
+              )
+            }
+          />
+        </ProductItem>
       )}
     />
   );
@@ -50,7 +75,9 @@ ProductsOverviewScreen.navigationOptions = (navData) => {
         <Item
           title="Cart"
           iconName={Platform.OS === "android" ? "md-cart" : "ios-cart"}
-          onPress={() => {navData.navigation.navigate('Cart')}}
+          onPress={() => {
+            navData.navigation.navigate("Cart");
+          }}
         />
       </HeaderButtons>
     ),
@@ -59,10 +86,12 @@ ProductsOverviewScreen.navigationOptions = (navData) => {
         <Item
           title="Menu"
           iconName={Platform.OS === "android" ? "md-menu" : "ios-menu"}
-          onPress={() => {navData.navigation.toggleDrawer()}}
+          onPress={() => {
+            navData.navigation.toggleDrawer();
+          }}
         />
       </HeaderButtons>
-    )
+    ),
   };
 };
 

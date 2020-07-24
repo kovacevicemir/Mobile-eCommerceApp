@@ -23,7 +23,7 @@ const ProductItem = (props) => {
     <View style={styles.product}>
       <View style={styles.touchable}>
         <TouchableComponent
-          onPress={() => props.onViewDetail(product.id, product.title)}
+          onPress={() => props.onSelect(product.id, product.title)}
           useForeground
         >
           <View>
@@ -35,16 +35,7 @@ const ProductItem = (props) => {
               <Text style={styles.price}>${product.price.toFixed(2)}</Text>
             </View>
             <View style={styles.actions}>
-              <Button
-                style={styles.btn_details}
-                title="View Details"
-                onPress={() => props.onViewDetail(product.id, product.title)}
-              />
-              <Button
-                style={styles.btn_cart}
-                title="To Cart"
-                onPress={() => props.onAddToCart(product.id, product.title, product.price)}
-              />
+              {props.children}
             </View>
           </View>
         </TouchableComponent>
