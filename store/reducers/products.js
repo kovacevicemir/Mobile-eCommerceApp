@@ -32,7 +32,7 @@ export default (state = initialState, action) => {
     case CREATE_PRODUCT:
       const productInputs = action.payload;
       const newProduct = new Product(
-        new Date().toString(),
+        productInputs.id,
         "u1",
         productInputs.title,
         productInputs.imageUrl,
