@@ -1,8 +1,6 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {
   StyleSheet,
-  Text,
-  View,
   FlatList,
   Platform,
   Button,
@@ -13,6 +11,7 @@ import * as CartActions from "../../store/actions/cart";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import Colors from "../../constants/Colors";
+import * as ProductActions from '../../store/actions/products'
 
 const ProductsOverviewScreen = (props) => {
   const products = useSelector((state) => state.products.availableProducts);
@@ -35,6 +34,10 @@ const ProductsOverviewScreen = (props) => {
       })
     );
   };
+
+  useEffect(() =>{
+    dispatch(ProductActions.fetchProducts())
+  },[dispatch])
 
   return (
     <FlatList

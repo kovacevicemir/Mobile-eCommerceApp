@@ -5,7 +5,7 @@ import {
   DELETE_PRODUCT,
   CREATE_PRODUCT,
   UPDATE_PRODUCT,
-  updateProduct,
+  SET_PRODUCTS
 } from "../actions/products";
 import Product from "../../models/Product";
 
@@ -17,6 +17,13 @@ const initialState = {
 //CART REDUCER LOGIC
 export default (state = initialState, action) => {
   switch (action.type) {
+    case SET_PRODUCTS:
+      const products = action.payload
+      return {
+        ...state,
+        availableProducts:products
+      }
+      
     case DELETE_PRODUCT:
       const productId = action.payload;
       return {
