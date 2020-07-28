@@ -10,7 +10,16 @@ export const SET_PRODUCTS = "SET_PRODUCTS";
 
 //@delete product
 export const deleteProduct = (productId) => {
-  return { type: DELETE_PRODUCT, payload: productId };
+  return async(dispatch) =>{
+    await fetch(
+      `https://simpleshop-96254.firebaseio.com/products/${productId}.json`,
+      {
+        method: "DELETE"
+      }
+    );
+
+    dispatch({type: DELETE_PRODUCT, payload: productId});
+  }
 };
 
 //@create product
@@ -43,10 +52,32 @@ export const createProduct = (title, description, imageUrl, price) => {
 
 //@update product
 export const updateProduct = (id, title, description, imageUrl) => {
-  return {
-    type: UPDATE_PRODUCT,
-    payload: { id, title, description, imageUrl },
-  };
+  return async dispatch =>{
+    //change things on server
+    await fetch(
+      `https://simpleshop-96254.firebaseio.com/products/${id}.json`,
+      {
+        method:'PATCH',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          imageUrl
+        }),
+      }
+    );
+
+
+    //as usual change state 
+    dispatch({
+      type: UPDATE_PRODUCT,
+      payload: { id, title, description, imageUrl },
+    });
+  }
+
+  
 };
 
 //@get all the products from firebase
