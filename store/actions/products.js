@@ -11,12 +11,16 @@ export const SET_PRODUCTS = "SET_PRODUCTS";
 //@delete product
 export const deleteProduct = (productId) => {
   return async(dispatch) =>{
-    await fetch(
+    const response = await fetch(
       `https://simpleshop-96254.firebaseio.com/products/${productId}.json`,
       {
         method: "DELETE"
       }
     );
+
+    if(!response.ok){
+      throw new Error('Something went wrong!');
+    }
 
     dispatch({type: DELETE_PRODUCT, payload: productId});
   }
@@ -54,7 +58,7 @@ export const createProduct = (title, description, imageUrl, price) => {
 export const updateProduct = (id, title, description, imageUrl) => {
   return async dispatch =>{
     //change things on server
-    await fetch(
+    const response = await fetch(
       `https://simpleshop-96254.firebaseio.com/products/${id}.json`,
       {
         method:'PATCH',
@@ -69,6 +73,9 @@ export const updateProduct = (id, title, description, imageUrl) => {
       }
     );
 
+    if(!response.ok){
+      throw new Error('Something went wrong!');
+    }
 
     //as usual change state 
     dispatch({
