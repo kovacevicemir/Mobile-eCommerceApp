@@ -9,14 +9,13 @@ const initialState = {
 export default (state = initialState, action) => {
   switch (action.type) {
     case ADD_ORDER:
-      const items = action.payload.items;
-      const amount = action.payload.amount;
+      const {id, items, amount, date} = action.payload
 
       const newOrder = new Order(
-        new Date().toString(),
+        id,
         items,
         amount,
-        new Date()
+        date
       );
 
       return {

@@ -1,13 +1,20 @@
-import React from "react";
-import { StyleSheet, Text, View, FlatList, Button } from "react-native";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Button,
+  ActivityIndicator,
+} from "react-native";
 import Colors from "../../constants/Colors";
 import { useSelector, useDispatch } from "react-redux";
 import CartItem from "../../components/shop/CartItem";
 import { removeFromCart } from "../../store/actions/cart";
-import * as ordersActions from "../../store/actions/order"
+import * as ordersActions from "../../store/actions/order";
 
 const CartScreen = (props) => {
-  //style={styles.something}
+  const [isLoading, setIsLoading] = useState(false);
 
   const dispatch = useDispatch();
   const onRemove = (id) => {
@@ -31,37 +38,48 @@ const CartScreen = (props) => {
     return transformedCartItems;
   });
 
+  const sendOrderHandler = async () => {
+    setIsLoading(true);
+    await dispatch(ordersActions.addOrder(cartItems, cartTotalAmount));
+    setIsLoading(false);
+  };
+
   return (
     <View style={styles.screen}>
       <View style={styles.summary}>
         <Text style={styles.summaryText}>
           Total:{" "}
-          <Text style={styles.amount}>${Math.round(cartTotalAmount.toFixed(2) * 100) /100}</Text>
+          <Text style={styles.amount}>
+            ${Math.round(cartTotalAmount.toFixed(2) * 100) / 100}
+          </Text>
         </Text>
-        <Button
-          disabled={cartItems.length === 0}
-          color={Colors.accent}
-          title="Order Now"
-          onPress = {() => {
-            dispatch(ordersActions.addOrder(cartItems, cartTotalAmount))
-          }}
-        />
+        {isLoading ? (
+          <ActivityIndicator size="small" color={Colors.primary} />
+        ) : (
+          <Button
+            disabled={cartItems.length === 0}
+            color={Colors.accent}
+            title="Order Now"
+            onPress={sendOrderHandler}
+          />
+        )}
       </View>
       <View>
         <FlatList
           data={cartItems}
           keyExtractor={(item) => item.productId}
-          renderItem={(item) => <CartItem item={item} deletable={true} onRemove={onRemove} />}
+          renderItem={(item) => (
+            <CartItem item={item} deletable={true} onRemove={onRemove} />
+          )}
         />
       </View>
     </View>
   );
 };
 
-CartScreen.navigationOptions ={
-  headerTitle:'Your Cart'
-}
-
+CartScreen.navigationOptions = {
+  headerTitle: "Your Cart",
+};
 
 export default CartScreen;
 

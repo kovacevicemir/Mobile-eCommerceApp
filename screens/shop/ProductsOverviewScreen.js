@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -39,7 +39,7 @@ const ProductsOverviewScreen = (props) => {
     );
   };
 
-  const loadProducts = async () => {
+  const loadProducts = useCallback(async () => {
     setError(null);
     setIsLoading(true);
 
@@ -50,20 +50,21 @@ const ProductsOverviewScreen = (props) => {
     }
     
     setIsLoading(false);
-  };
+  },[dispatch, setIsLoading, setError]);
 
   //use for set navigation listener
   useEffect(()=>{
     const willFocusSub = props.navigation.addListener('willFocus', loadProducts)
-
+    console.log('trying to loadProducts (1)...')
     return () =>{
       willFocusSub.remove()
     };
-  },[])
+  },[loadProducts])
 
   useEffect(() => {
+    console.log('trying to loadProducts (2)...')
     loadProducts();
-  }, []);
+  }, [loadProducts]);
 
   if (isLoading) {
     return (
