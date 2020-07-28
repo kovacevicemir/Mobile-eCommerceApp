@@ -20,10 +20,10 @@ export default (state = initialState, action) => {
     case SET_PRODUCTS:
       const products = action.payload
       return {
-        ...state,
-        availableProducts:products
+        userProducts:products.filter((prod) => prod.ownerId === "u1"),
+        availableProducts:products,
       }
-      
+
     case DELETE_PRODUCT:
       const productId = action.payload;
       return {

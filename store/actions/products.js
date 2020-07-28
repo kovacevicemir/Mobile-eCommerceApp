@@ -1,4 +1,4 @@
-import Product from '../../models/Product'
+import Product from "../../models/Product";
 
 //ACTION NAMES
 export const DELETE_PRODUCT = "DELETE_PRODUCT";
@@ -51,27 +51,41 @@ export const updateProduct = (id, title, description, imageUrl) => {
 
 //@get all the products from firebase
 export const fetchProducts = () => {
-    console.log('glavonja')
   return async (dispatch) => {
-    //get the data from firebase
-    const response = await fetch("https://simpleshop-96254.firebaseio.com/products.json");
-    const resData = await response.json();
 
-    const loadedProducts = []
-    for(const key in resData){
+    try {
+      //get the data from firebase
+      const response = await fetch(
+        "https://simpleshop-96254.firebaseio.com/products.json"
+      );
+
+      if(!response.ok){
+        throw new Error('Something went wrong!');
+      }
+
+      const resData = await response.json();
+
+      const loadedProducts = [];
+      for (const key in resData) {
         loadedProducts.push(
-            new Product(
-                key,
-                'u1',
-                resData[key].title,
-                resData[key].imageUrl,
-                resData[key].description,
-                resData[key].price
-            )
-        )
+          new Product(
+            key,
+            "u1",
+            resData[key].title,
+            resData[key].imageUrl,
+            resData[key].description,
+            resData[key].price
+          )
+        );
+      }
+
+      //dispatch
+      dispatch({ type: SET_PRODUCTS, payload: loadedProducts });
+
+    } catch (err) {
+      //send to some analytic or something
+      throw(err)
     }
 
-    //dispatch
-    dispatch({ type: SET_PRODUCTS, payload: loadedProducts });
   };
 };
