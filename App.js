@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import productsReducer from "./store/reducers/products";
 import cartReducer from "./store/reducers/cart"
 import ordersReducer from './store/reducers/order'
+import authReducer from './store/reducers/auth'
 import ShopNavigator from "./navigation/ShopNavigator";
 import { AppLoading } from "expo";
 import * as Font from "expo-font";
@@ -16,7 +17,8 @@ enableScreens();
 const rootReducer = combineReducers({
   products: productsReducer,
   cart: cartReducer,
-  orders: ordersReducer
+  orders: ordersReducer,
+  auth: authReducer
 });
 
 

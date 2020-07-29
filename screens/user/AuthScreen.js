@@ -1,12 +1,14 @@
-import React, { useState, useReducer, useCallback } from "react";
+import React, { useState, useEffect, useReducer, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import * as authActions from "../../store/actions/auth";
 import {
   StyleSheet,
   Text,
+  Alert,
   View,
   ScrollView,
   Button,
+  ActivityIndicator,
   KeyboardAvoidingView,
 } from "react-native";
 import Input from "../../components/UI/Input";
@@ -43,7 +45,16 @@ const formReducer = (state, action) => {
 };
 
 const AuthScreen = (props) => {
+  const [isLoading, setIsLoading] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
+  const [error, setError] = useState()
+
+  useEffect(()=>{
+    if(error){
+        Alert.alert('An Error Occured!', error, [{text:'OK'}])
+    }
+  },[error])
+
   //
   const [formState, dispatchFormState] = useReducer(formReducer, {
     inputValues: {
@@ -60,21 +71,32 @@ const AuthScreen = (props) => {
 
   const dispatch = useDispatch();
 
-  const authHandler = () => {
+  const authHandler = async () => {
+    setError(null);
+    setIsLoading(true);
     if (isSignup) {
-      dispatch(
+      await dispatch(
         authActions.signup(
           formState.inputValues.email,
           formState.inputValues.password
         )
       );
+      setIsLoading(false);
+      props.navigation.navigate('Shop');
     } else {
-      dispatch(
-        authActions.login(
-          formState.inputValues.email,
-          formState.inputValues.password
-        )
-      );
+      try {
+        await dispatch(
+            authActions.login(
+              formState.inputValues.email,
+              formState.inputValues.password
+            )
+          );
+        props.navigation.navigate('Shop');  
+        
+      } catch (err) {
+          setError(err.message);
+          setIsLoading(false);
+      }
     }
   };
 
@@ -127,11 +149,15 @@ const AuthScreen = (props) => {
             />
             {/* Buttons */}
             <View style={styles.buttonContainer}>
-              <Button
-                title={isSignup ? "Sign up" : "Login"}
-                color={Colors.primary}
-                onPress={authHandler}
-              />
+              {isLoading ? (
+                <ActivityIndicator color={Colors.primary} size="small" />
+              ) : (
+                <Button
+                  title={isSignup ? "Sign up" : "Login"}
+                  color={Colors.primary}
+                  onPress={authHandler}
+                />
+              )}
             </View>
             <View style={styles.buttonContainer}>
               <Button

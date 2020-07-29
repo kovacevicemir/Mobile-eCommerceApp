@@ -8,11 +8,12 @@ export const SET_ORDERS = "SET_ORDERS";
 
 //@add order
 export const addOrder = (cartItems, totalAmount) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) =>{
+    const token = getState().auth.token
     //add it to the server
     const date = new Date()
     const response = await fetch(
-        "https://simpleshop-96254.firebaseio.com/orders/u1.json",
+        `https://simpleshop-96254.firebaseio.com/orders/u1.json?auth=${token}`,
         {
           method: "POST",
           headers: {

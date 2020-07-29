@@ -21,13 +21,20 @@ export const signup = (email, password) => {
     });
 
     if(!response.ok){
-        throw new Error('Something went wrong!');
+        const errorResData = await response.json();
+        const errorId = errorResData.error.message;
+        let message = 'Something went wrong!';
+        if(errorId === 'EMAIL_EXISTS'){
+            message = 'This email already exists'
+        }
+
+        throw new Error(message);
     }
 
     const resData = await response.json()
     console.log(resData)
     //userid, token etc...
-    dispatch({ type: SIGNUP, payload: { email, password } });
+    dispatch({ type: SIGNUP, payload: { token: resData.idToken, userId: resData.localId } });
   };
 };
 
@@ -50,12 +57,20 @@ export const login = (email, password) => {
     });
 
     if(!response.ok){
-        throw new Error('Something went wrong!');
+        const errorResData = await response.json();
+        const errorId = errorResData.error.message;
+        let message = 'Something went wrong!';
+        if(errorId === 'EMAIL_NOT_FOUND'){
+            message = 'This email does not exist'
+        }else if(errorId === 'INVALID_PASSWORD'){
+            message = 'This password is not valid'
+        }
+
+        throw new Error(message);
     }
 
     const resData = await response.json()
-    console.log(resData)
     //userid, token etc...
-    dispatch({ type: LOGIN, payload: { email, password } });
+    dispatch({ type: LOGIN, payload: { token: resData.idToken, userId: resData.localId } });
   };
 };
