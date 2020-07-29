@@ -31,6 +31,9 @@ export const deleteProduct = (productId) => {
 export const createProduct = (title, description, imageUrl, price) => {
   return async (dispatch, getState) =>{
     const token = getState().auth.token
+    const userId = getState().auth.userId
+
+    console.log('Attempting to create product...');
     const response = await fetch(
       `https://simpleshop-96254.firebaseio.com/products.json?auth=${token}`,
       {
@@ -43,15 +46,17 @@ export const createProduct = (title, description, imageUrl, price) => {
           description,
           imageUrl,
           price,
+          ownerId:userId
         }),
       }
     );
 
     const resData = await response.json();
+    console.log('resData: ',resData)
 
     dispatch({
       type: CREATE_PRODUCT,
-      payload: { id: resData.name, title, description, imageUrl, price },
+      payload: { id: resData.name, userId, title, description, imageUrl, price },
     });
   };
 };
@@ -92,7 +97,7 @@ export const updateProduct = (id, title, description, imageUrl) => {
 
 //@get all the products from firebase
 export const fetchProducts = () => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
 
     try {
       //get the data from firebase
@@ -106,12 +111,14 @@ export const fetchProducts = () => {
 
       const resData = await response.json();
 
+      const userId = getState().auth.userId
+
       const loadedProducts = [];
       for (const key in resData) {
         loadedProducts.push(
           new Product(
             key,
-            "u1",
+            resData[key].ownerId,
             resData[key].title,
             resData[key].imageUrl,
             resData[key].description,
@@ -120,8 +127,16 @@ export const fetchProducts = () => {
         );
       }
 
+      const userProducts = loadedProducts.filter(prod => prod.ownerId === userId)
+
       //dispatch
-      dispatch({ type: SET_PRODUCTS, payload: loadedProducts });
+      dispatch({ 
+        type: SET_PRODUCTS, 
+        payload: {
+          loadedProducts,
+          userProducts:loadedProducts.filter(prod=>prod.ownerId === userId) 
+        }
+      });
 
     } catch (err) {
       //send to some analytic or something

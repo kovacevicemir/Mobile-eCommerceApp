@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, FlatList, Button, Alert } from "react-native";
+import { StyleSheet, FlatList, Button, Alert,View, Text } from "react-native";
 import ProductItem from "../../components/shop/ProductItem";
 import { useSelector, useDispatch } from "react-redux";
 import CustomHeaderButton from "../../components/UI/HeaderButton";
@@ -28,6 +28,14 @@ const UserProductsScreen = (props) => {
       },
     ]);
   };
+
+  if(userProducts.length === 0){
+    return (
+      <View style={{flex:2, alignItems:'center', justifyContent:'top', marginTop:'25%'}}>
+        <Text>You did not add any products yet!</Text>
+      </View>
+    )
+  }
 
   return (
     <FlatList

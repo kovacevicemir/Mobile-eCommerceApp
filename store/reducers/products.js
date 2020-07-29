@@ -10,17 +10,19 @@ import {
 import Product from "../../models/Product";
 
 const initialState = {
-  availableProducts: PRODUCTS,
-  userProducts: PRODUCTS.filter((prod) => prod.ownerId === "u1"),
+  availableProducts: [],
+  userProducts: [],
 };
 
-//CART REDUCER LOGIC
+//reducer logic
 export default (state = initialState, action) => {
   switch (action.type) {
     case SET_PRODUCTS:
-      const products = action.payload
+      const products = action.payload.loadedProducts
+      const userprod = action.payload.userProducts
+      
       return {
-        userProducts:products.filter((prod) => prod.ownerId === "u1"),
+        userProducts:userprod,
         availableProducts:products,
       }
 
@@ -40,7 +42,7 @@ export default (state = initialState, action) => {
       const productInputs = action.payload;
       const newProduct = new Product(
         productInputs.id,
-        "u1",
+        productInputs.userId,
         productInputs.title,
         productInputs.imageUrl,
         productInputs.description,
