@@ -6,7 +6,7 @@ const saveDataToStorage = (token, userId, expirationDate) => {
     JSON.stringify({
       token,
       userId,
-      expiryDate: expirationDate.toISOString()
+      expiryDate: expirationDate.toISOString(),
     })
   );
 };
@@ -14,7 +14,10 @@ const saveDataToStorage = (token, userId, expirationDate) => {
 //ACTION NAMES
 export const SIGNUP = "SIGNUP";
 export const LOGIN = "LOGIN";
-export const AUTHENTICATE = 'AUTHENTICATE'
+export const AUTHENTICATE = "AUTHENTICATE";
+export const LOGOUT = "LOGOUT";
+
+let timer;
 
 //ACTION CREATORS
 //@sign up
@@ -50,12 +53,18 @@ export const signup = (email, password) => {
     //userid, token etc...
     dispatch({
       type: SIGNUP,
-      payload: { token: resData.idToken, userId: resData.localId },
+      payload: {
+        token: resData.idToken,
+        userId: resData.localId,
+        expiryTime: parseInt(resData.expiresIn) * 1000,
+      },
     });
 
     //save data to storage
-    const expirationDate = new Date(new Date().getTime() + parseInt(resData.expiresIn) * 1000)
-    saveDataToStorage(resData.idToken, resData.localId, expirationDate)
+    const expirationDate = new Date(
+      new Date().getTime() + parseInt(resData.expiresIn) * 1000
+    );
+    saveDataToStorage(resData.idToken, resData.localId, expirationDate);
   };
 };
 
@@ -95,16 +104,47 @@ export const login = (email, password) => {
     //userid, token etc...
     dispatch({
       type: LOGIN,
-      payload: { token: resData.idToken, userId: resData.localId },
+      payload: {
+        token: resData.idToken,
+        userId: resData.localId,
+        expiryTime: parseInt(resData.expiresIn) * 1000,
+      },
     });
 
+    dispatch(authenticate(resData.idToken,resData.localId,parseInt(resData.expiresIn) * 1000))
+
     //save data to storage
-    const expirationDate = new Date(new Date().getTime() + parseInt(resData.expiresIn) * 1000)
-    saveDataToStorage(resData.idToken, resData.localId, expirationDate)
+    const expirationDate = new Date(
+      new Date().getTime() + parseInt(resData.expiresIn) * 1000
+    );
+    saveDataToStorage(resData.idToken, resData.localId, expirationDate);
   };
 };
 
 //@authenticate if token exists in memory
-export const authenticate = (token, userId) =>{
-  return { type: AUTHENTICATE, payload:{token,userId}}
-}
+export const authenticate = (token, userId, expiryTime) => {
+  return (dispatch) => {
+    dispatch(setLogoutTimer(expiryTime));
+    dispatch({ type: AUTHENTICATE, payload: { token, userId } });
+  };
+};
+
+//@logout
+export const logout = () => {
+  clearLogoutTimer();
+  AsyncStorage.removeItem("userData");
+  return { type: LOGOUT };
+};
+
+//@set logout timer
+const clearLogoutTimer = () => {
+  clearTimeout(timer);
+};
+
+const setLogoutTimer = (expirationTime) => {
+  return (dispatch) => {
+    timer = setTimeout(() => {
+      dispatch(logout());
+    }, expirationTime);
+  };
+};
